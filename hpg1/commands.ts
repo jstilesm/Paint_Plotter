@@ -59,7 +59,7 @@ export default class HGPL {
     this.commands.push(`PA${x},${y}`);
   }
   move(x: number, y: number) {
-    this.commands.push(`PR${x},${y}`);
+    this.commands.push(`PR${x},${y}`); 1
     this.currentPosition = { x: this.currentPosition.x + x, y: this.currentPosition.y + y };
   }
   drawLine(x1: number, y1: number, x2: number, y2: number) {
