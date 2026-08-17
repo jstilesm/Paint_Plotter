@@ -11,6 +11,7 @@ A web app that lets a user draw an image on an HTML canvas and converts the draw
 - [ ] Build out JS to plotter interpreter — given JS/canvas drawing data, return HP-GL code for the plotter
 - [ ] Build out web page with canvas screen where user can draw an image
 - [ ] Connect both interfaces together
+- [ ] Add Whiteout feature
 
 ---
 
