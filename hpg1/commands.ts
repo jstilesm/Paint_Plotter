@@ -19,12 +19,7 @@ export default class HGPL {
   }
   private init(options: InitOptions) {
     this.commands.push('IN');
-
-    if (options.scaleWindow) {
-        const { x1, x2, y1, y2 } = options.scaleWindow
-        this.commands.push(`SC${x1},${x2},${y1},${y2}`);
-    }
-    this.commands.push(`SP${options.defaultPen ?? 1}`)
+    this.commands.push(`SP${options.defaultPen ?? 4}`)
   }
   private toPlotterUnits(x: number, y: number): [number, number] {
     return [Math.round(x * this.unitsPerMM), Math.round(y * this.unitsPerMM)];
@@ -46,36 +41,32 @@ export default class HGPL {
   selectPen(p: number) { 
     this.commands.push(`SP${p}`)
   }
-  moveTo(x: number, y: number ) {
-    const [px, py] = this.toPlotterUnits(x, y);
-    this.commands.push(`PU${px},${py}`);
-  }
-  lineTo(x: number, y: number) {
-    const [px, py] = this.toPlotterUnits(x, y);
-    this.commands.push(`PD${px},${py}`);
-  }
   set(x: number, y: number) {
+    const [px, py] = this.toPlotterUnits(x, y);
     this.currentPosition = { x, y };
-    this.commands.push(`PA${x},${y}`);
+    this.commands.push(`PA ${px},${py}`);
   }
   move(x: number, y: number) {
-    this.commands.push(`PR${x},${y}`); 1
+    const [px, py] = this.toPlotterUnits(x, y);
+    this.commands.push(`PR ${px},${py}`);
     this.currentPosition = { x: this.currentPosition.x + x, y: this.currentPosition.y + y };
   }
   drawLine(x1: number, y1: number, x2: number, y2: number) {
-    this.moveTo(x1, y1);
-    this.lineTo(x2, y2);
+    this.set(x1, y1);
+    this.move(x2, y2);
   }
   drawPoint(x: number, y: number) {
-    this.moveTo(x, y);
+    this.move(x, y);
     this.penDOWN();
     this.penUP();
   }
   polyLine(points: Point[]) {
-    const coords = points
-    .map(p => this.toPlotterUnits(p.x, p.y)
-    .join(',')).join(',');
-    this.commands.push(`PD${coords}`);
+    this.set(points[0].x, points[0].y);
+    this.penDOWN();
+    points.forEach((point) => {
+      this.set(point.x, point.y)
+    })
+    this.penUP();
   }
   arc(
     x: number, 
@@ -87,7 +78,7 @@ export default class HGPL {
     ) {
         sweep = Math.min(sweep, 2 * Math.PI)
         const arcLength = Math.abs(sweep * r)
-        const steps = Math.max(Math.round(arcLength / stepSize))
+        const steps = Math.max(8, Math.round(arcLength / stepSize))
         const pts: Point[] = []
         for (let i = 0; i <= steps; i++) {
             const t = i / steps
