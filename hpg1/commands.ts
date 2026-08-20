@@ -1,10 +1,10 @@
 
 import type { InitOptions, Point } from "./types";
 // Base comamnds
-// IN (initialize), 
-// SP (select pen), 
-// PU/PD (pen up/down), 
-// PA/PR (absolute/relative plot) ?, 
+// IN (initialize),
+// SP (select pen),
+// PU/PD (pen up/down),
+// PA/PR (absolute/relative plot) ?,
 // SC (scaling points) ?,
 
 export default class HGPL {
